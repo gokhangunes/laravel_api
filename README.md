@@ -1,7 +1,7 @@
 # laravel_api
 
 ## Teknoloji 
-docker, redis, rabbit, mysql, nginx, php7.4, laravel 7
+###docker, redis, rabbit, mysql, nginx, php7.4, laravel 7
 
 google, ios,  3rd-party mock endpoindleri proje içerisinde oluşturuldu.
 

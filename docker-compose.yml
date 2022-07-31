@@ -1,0 +1,78 @@
+version: '3'
+
+networks:
+  local-bridge:
+    driver: bridge
+
+services:
+  ###> MYSQL ###
+  mysql_db:
+    build:
+      context: ./mysql
+      dockerfile: ../mysql/DockerFile
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: api
+      MYSQL_USER: api
+      MYSQL_PASSWORD: api
+    ports:
+      - "3306:3306"
+    networks:
+      - local-bridge
+  ###< MYSQL ###
+
+  ###> REDIS ###
+  redis:
+    image: redis:4.0
+    container_name: app_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - local-bridge
+  ###< REDIS ###
+
+  ###> LARAVEL 7 ##
+  laravel:
+    build:
+      context: ./api_project
+      dockerfile: ../php/DockerFile
+    image: laravel
+    container_name: laravel
+    tty: true
+    working_dir: /var/www
+    volumes:
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./api_project/:/var/www
+    networks:
+      - local-bridge
+  ###< LARAVEL 7 ###
+
+  ###> NGINX ###
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    tty: true
+    volumes:
+      - ./api_project/:/var/www
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    ports:
+      - 8091:80
+    networks:
+      - local-bridge
+  ###< NGNIX ###
+
+  ###> RABBIT_MQ ###
+  rabbitmq:
+    image: rabbitmq:3.8-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+      - 5673:5672
+      - 15673:15672
+    networks:
+      - local-bridge
+  ###< RABBİT_MQ ###
+volumes:
+###> doctrine/doctrine-bundle ###
+  db-data:
+###< doctrine/doctrine-bundle ###

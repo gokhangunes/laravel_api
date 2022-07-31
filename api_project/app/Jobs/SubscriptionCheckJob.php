@@ -50,7 +50,7 @@ class SubscriptionCheckJob implements ShouldQueue
         if (!$device) {
             return;
         }
-        dump($this->data['receipt']);
+
         if ($device->os === 'android') {
             $status = (bool) $googleServie->check($this->data['receipt'])['status'];
             $expireData = $googleServie->check($this->data['receipt'])['expire-date'] ?? null;
